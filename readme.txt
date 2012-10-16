@@ -1,0 +1,2 @@
+Crear estructura de la Base de Datos desde el archivo "estructure_database.sql" en la carpeta "admin".
+Para conectar satisfactoriamente a su administrador de bases de datos debe editar el archivo "BD.class.php" de la carpeta "classes", proporcionando los datos de acceso a las variables privadas.
