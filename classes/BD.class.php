@@ -39,19 +39,66 @@
 			} else { return mysql_error($this->conexion); } //Si no se guarda el registro devuelve falso
 		}
 
-		public function update_registro( $id )
+		public function update_registro( $id, $status='active' )
 		{
-			$sql = "UPDATE `mails` SET `status`='active'";
+			$sql = "UPDATE `mails` SET `status`='". $status ."'";
 			if( mysql_query( $sql, $this->conexion ) ) { return true; } else { return false; } //Si no se guarda el registro devuelve falso
 		}
 
+	/**
+	* Debe devolver TRUE en el caso de no encontrar concordancias o bien FALSE 
+	* si el email ya esta en la base de datos 
+	*/
 		public function buscar_duplicado( $email )
 		{
-			$buscar = "SELECT `email` FROM `mails` WHERE `email`='". $email ."'";
+			$buscar = "SELECT * FROM `mails` WHERE `email`='". $email ."'";
+			$result = mysql_query( $buscar, $this->conexion );
 		// Si no hay duplicados retorno TRUE
-			if( !mysql_query( $buscar, $this->conexion ) ) { return true; } else { return false; }				
+			if( $fila = mysql_fetch_array( $result ) ) 
+			{ 			
+				return true; 
+			} elseif( $fila['email'] == $email ) {
+				$this->update_registro( $fila['id_email'] ); // Vuelvo a activar el email para los boletines
+				return false; //Aviso de que el email ya esta registrado
+			} else {
+				/** 
+				* En el caso de que el email nunca estubo registrado en el boletin 
+				*/
+					return false; 
+			}		
 		}
 
+		public function devolver_email( $id )
+		{
+			$sql = "SELECT `email` FROM `mails` WHERE `id_email`='". $id ."'";
+			$consulta = mysql_query( $sql, $this->conexion );
+			$email = mysql_result( $consulta, 0 );
+			return $email;
+		}
+
+		public function listar_campaings()
+		{
+			$listado = array();
+			$sql = "SELECT * FROM `campaings`";
+			if( $result = mysql_query( $sql, $this->conexion ) )
+			{
+				$listado = mysql_result( $result );
+			}
+			return $listado;
+		}
+
+		public function listar_correos()
+		{
+			$listado = array();
+			$sql = "SELECT * FROM `emails`";
+			if( $result = mysql_query( $sql, $this->conexion ) )
+			{
+				$listado = mysql_result( $result );
+			}
+			return $listado;
+		}
+
+	// Cierro la conexion con la base de datos
 		public function database_close()
 		{
 			mysql_close( $this->conexion );

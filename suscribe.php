@@ -1,6 +1,6 @@
 <?php 
 	include( 'classes/BD.class.php' ); // Clase de control de base de datos 
-	include( 'classes/NewEmail.class.php' ); // Clase de control y chequeo de emails
+	include( 'classes/Mailer.class.php' ); // Clase de control y chequeo de emails
 
 	if( $_POST )
 	{
@@ -21,7 +21,7 @@
 					{
 
 					// Llamo a la instancia de la clase para que envie el correo con la confirmación de la suscripcion
-						$enviar_suscripcion = new NewEmail( "confirmacion" ); // Arma el template
+						$enviar_suscripcion = new Mailer( "confirmacion" ); // Arma el template
 						$enviar_suscripcion->enviar_email( $email, $id_conexion, "Confirme su suscripci&oacute;n" ); //Envia el correo
 
 						$success = "Revise su casilla de email para confirmar su suscripci&oacute;n.";
