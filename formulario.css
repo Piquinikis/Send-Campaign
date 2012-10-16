@@ -1,0 +1,43 @@
+/*
+	Declase aqui todos los estilos para su formulario de suscripción
+	Custom Styles **************************************************
+*/
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.boletin {
+    font-family: 'Trebuchet MS';
+    font-size: 100%;
+    margin: 5px 10px;
+}
+
+#message{
+
+}
+
+#message .error{
+
+}
+
+#message .success{
+
+}
+
+form#newsletter{
+
+}
+
+form#newsletter label {
+
+}
+
+form#newsletter input#email{
+
+}
+
+form#newsletter input=[submit]{
+
+}

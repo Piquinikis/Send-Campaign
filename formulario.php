@@ -1,7 +1,12 @@
 <!-- Formulario para alta en base de datos de boletines informativos -->
-<?php 
-	include( 'suscribe.php' ); 
-	
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="formulario.css">
+</head>
+<body class="boletin">
+	<?php 
+		include( 'suscribe.php' ); 	
 	?>
 		<!-- Muestro variables de control de errores y proceso -->
 		<div id="message">
@@ -13,11 +18,10 @@
 			 	<?php } ?>
 		</div>
 
-		<form id="newsletter" action="<?php $_SERVER[PHP_SELF]; ?>" method="post">
+		<form id="newsletter" method="post">
 			<label for="email" id="email">Inscribase al boletin:</label>
-			<input id="email" name="email" type="email" placeholder="ejemplo@host.com" required="required" autofocus="true">
-			<input type="submit" value="Suscribirme">
+			<input id="email" name="email" type="email" placeholder="ejemplo@host.com" required="required" autofocus="true" />
+			<input type="submit" value="Suscribirme" />
 		</form>
-	
-
-
+</body>
+</html>
