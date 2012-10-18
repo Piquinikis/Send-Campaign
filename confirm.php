@@ -15,5 +15,7 @@
 
 			echo 'Bienvenido a nuestro boletin.';
 		}
+
+		$base_datos->database_close();
 	}
 ?>

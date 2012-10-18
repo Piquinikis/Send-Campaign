@@ -2,38 +2,41 @@
 	/**
 	* Obtengo la plantilla a utilizar para enviar correos dependiendo del estado de la suscripción
 	*/
-	$template = '';
-	$su_email = 'danielrussian@gmail.com';
-	$headers = array();
-	$subject; 
-	$siteName = ''; // No se olvide de agregar http:// o https://
-
 	class Mailer
 	{		
-		function __construct( $template_file, $string )
+		public $template = ''; //Plantilla que se va a usar para enviar el email, formato html por defecto
+		public $from = '"Ana Frenkel"<info@anafrenkel.com.ar>';
+		public $headers = array();
+		/* Direccion web donde se encuentran alojados los archivos */
+		public $siteName = 'http://www.anafrenkel.com.ar/boletin'; // No se olvide de agregar http:// o https://
+
+		function __construct( $template_file )
 		{
-			$this->template = 'admin/template/' . $template_file . '.html';
-			
+			$this->template = $this->siteName . '/admin/templates/' . $template_file . '.html';			
 		}		
 
-		public function enviar_email( $email, $id_email, $string )
+		public function enviar_email( $email, $id_email, $string, $mensaje='', $imagen1=NULL )
 		{
-			$para = $email;
-			$this->subject = $string;
-			$this->headers = array(
-				"MIME-Version: 1.0\r\n", 
-				"Content-type: text/html; charset=utf-8", 
-				"From: $this->su_email\r\n" . "Reply-To: $this->su_email \r\n" . "X-Mailer: PHP/"
-				);
+			$this->headers = "From:".$this->from."\nReply-To:".$this->su_email."\n"; 
+			$this->headers = $this->headers ."X-Mailer:PHP/".phpversion()."\n"; 
+			$this->headers = $this->headers ."Mime-Version: 1.0\n"; 
+			$this->headers = $this->headers ."Content-Type: text/html"; 
+
 			$email_body = file_get_contents( $this->template );
 
-			$email_body = strtr($email_body,array(
+			$email_body = strtr($email_body, array(
+					'{$imagen1}' => $imagen1,
+					'{$mensaje}' => $mensaje,
 					'{$id}' => $id_email,
 					'{$siteName}' => $this->siteName
-					);
+					));
 
-			mail( $this->su_email, $subject, $email_body, $headers );
-		}
-        
+			if( mail( $email, $string, $email_body, $this->headers ) )
+			{
+				return true;
+			} else {
+				return false;
+			}
+		}       
 	}
 ?>

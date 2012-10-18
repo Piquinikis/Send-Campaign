@@ -27,12 +27,13 @@ CREATE TABLE IF NOT EXISTS `mails` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `campaingns`
+-- Estructura de tabla para la tabla `campaigns`
 --
 
-CREATE TABLE IF NOT EXISTS `campaingns` (
+CREATE TABLE IF NOT EXISTS `campaigns` (
   `id_campaign` tinyint(4) NOT NULL AUTO_INCREMENT,
   `fecha` int(10) NOT NULL,
+  `imagen` varchar(128) NOT NULL,
   `enviados` int(11) NOT NULL,
   `rebotados` int(11) NOT NULL,
   PRIMARY KEY (`id_campaign`)

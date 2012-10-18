@@ -17,16 +17,21 @@
 				/* Primero busco si existe duplicados, retorna TRUE si no existe el registro */
 				if( $data_base->buscar_duplicado( $email ) )
 				{
-					if( $id_conexion = $data_base->agregar_registro( $email ) )
-					{
+					$data_base->agregar_registro( $email );
+					$id_conexion = $data_base->devolver_id( $email );
 
+					if( $id_conexion )
+					{
 					// Llamo a la instancia de la clase para que envie el correo con la confirmación de la suscripcion
 						$enviar_suscripcion = new Mailer( "confirmacion" ); // Arma el template
-						$enviar_suscripcion->enviar_email( $email, $id_conexion, "Confirme su suscripci&oacute;n" ); //Envia el correo
-
-						$success = "Revise su casilla de email para confirmar su suscripci&oacute;n.";
-					} else {
-						echo $conecto;
+						if( $enviar_suscripcion->enviar_email( $email, $id_conexion, "Confirme su suscripcion" ) ) //Envia el correo
+						{
+							$success = "Revise su casilla de email para confirmar su suscripci&oacute;n.";
+						} else {
+							$error = "No se pudo entregar el correo, revise su direcci&oacute;n de email.";
+						}
+						
+					} else {	
 						$error = "Hubo un error al guardar su email, intente de nuevo.";
 					}
 				} else { $error = "Su email ya se encuentra registrado a nuestro newsletter."; }			

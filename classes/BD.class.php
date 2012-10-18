@@ -8,8 +8,9 @@
 	{
 		private $conexion;
 		private $root = 'localhost';
-		private $user_name = 'root';
-		private $database_password = '';
+		private $nombre_basededatos = 'afrenkel_newsletter';
+		private $user_name = 'afrenkel_mailer';
+		private $database_password = 'mailermasivo589';
 
 		function __construct()
 		{
@@ -20,7 +21,7 @@
 		{
 			if( $this->conexion = mysql_connect( $this->root, $this->user_name, $this->database_password ) )
 			{
-				mysql_select_db( "newsletter", $this->conexion );
+				mysql_select_db( $this->nombre_basededatos, $this->conexion );
 				return true;
 			} else { 
 				return false; 
@@ -33,15 +34,15 @@
 		public function agregar_registro( $email )
 		{
 			$sql = "INSERT INTO `mails` (email, status, created) VALUES ('". $email ."', 'inactive', '". strtotime(date('Y-m-d')) ."')";			
-			if( mysql_query( $sql, $this->conexion ) ) { 
-				$id_email = mysql_query("SELECT `id_email` FROM `mails` WHERE `email`='". $email ."'", $this->conexion );
-				return $id_email; 
-			} else { return mysql_error($this->conexion); } //Si no se guarda el registro devuelve falso
+			if( mysql_query( $sql, $this->conexion ) ) 
+			{ 				
+				return true; 
+			} else { return false; } //Si no se guarda el registro devuelve falso
 		}
 
 		public function update_registro( $id, $status='active' )
-		{
-			$sql = "UPDATE `mails` SET `status`='". $status ."'";
+		{		
+			$sql = "UPDATE `mails` SET `status`='". $status ."' WHERE `id_mail`='". $id ."'";
 			if( mysql_query( $sql, $this->conexion ) ) { return true; } else { return false; } //Si no se guarda el registro devuelve falso
 		}
 
@@ -53,36 +54,48 @@
 		{
 			$buscar = "SELECT * FROM `mails` WHERE `email`='". $email ."'";
 			$result = mysql_query( $buscar, $this->conexion );
+
 		// Si no hay duplicados retorno TRUE
-			if( $fila = mysql_fetch_array( $result ) ) 
+			if( mysql_num_rows( $result ) == 0 ) 
 			{ 			
 				return true; 
-			} elseif( $fila['email'] == $email ) {
-				$this->update_registro( $fila['id_email'] ); // Vuelvo a activar el email para los boletines
-				return false; //Aviso de que el email ya esta registrado
 			} else {
-				/** 
-				* En el caso de que el email nunca estubo registrado en el boletin 
-				*/
-					return false; 
+				$fila = mysql_fetch_array($result);				
+				$this->update_registro( $fila['id_mail'] ); // Vuelvo a activar el email para los boletines
+				return false; //Aviso de que el email ya esta registrado
 			}		
 		}
 
 		public function devolver_email( $id )
 		{
-			$sql = "SELECT `email` FROM `mails` WHERE `id_email`='". $id ."'";
+			$sql = "SELECT `email` FROM `mails` WHERE `id_mail`='". $id ."'";
 			$consulta = mysql_query( $sql, $this->conexion );
 			$email = mysql_result( $consulta, 0 );
 			return $email;
 		}
 
-		public function listar_campaings()
+		public function devolver_id( $email )
+		{
+			$result = mysql_query("SELECT `id_mail` FROM `mails` WHERE `email`='". $email ."'", $this->conexion );
+			$id_email = mysql_result( $result, 0 );
+			return $id_email;
+		}	
+
+		public function listar_campaigns()
 		{
 			$listado = array();
-			$sql = "SELECT * FROM `campaings`";
+			$sql = "SELECT * FROM `campaigns` ORDER BY `fecha` DESC";
 			if( $result = mysql_query( $sql, $this->conexion ) )
 			{
-				$listado = mysql_result( $result );
+				$i=0;
+				while( $row = mysql_fetch_array( $result ))
+				{
+					$listado[$i]['id_campaign'] = $row['id_campaign'];
+					$listado[$i]['fecha'] = $row['fecha'];
+					$listado[$i]['enviados'] = $row['enviados'];
+					$listado[$i]['rebotados'] = $row['rebotados'];
+					$i = $i+1;
+				}			
 			}
 			return $listado;
 		}
@@ -90,12 +103,24 @@
 		public function listar_correos()
 		{
 			$listado = array();
-			$sql = "SELECT * FROM `emails`";
+			$sql = "SELECT * FROM `mails` WHERE `status`='active'";
 			if( $result = mysql_query( $sql, $this->conexion ) )
 			{
-				$listado = mysql_result( $result );
+				$i=0;
+				while( $row = mysql_fetch_array( $result ))
+				{
+					$listado[$i]['id_mail'] = $row['email'];		
+					$listado[$i]['email'] = $row['email'];	
+					$i = $i+1;
+				}	
 			}
 			return $listado;
+		}
+
+		public function guardar_campaigns( $entregados, $rebotados, $imagen )
+		{
+			$sql = "INSERT INTO `campaigns` ( fecha, enviados, rebotados, imagen ) VALUES ( '". strtotime(date('Y-m-d')) ."', '". $entregados ."', '". $rebotados ."', '". $imagen ."')";
+			mysql_query( $sql, $this->conexion );
 		}
 
 	// Cierro la conexion con la base de datos
