@@ -8,9 +8,9 @@
 	{
 		private $conexion;
 		private $root = 'localhost';
-		private $nombre_basededatos = 'afrenkel_newsletter';
-		private $user_name = 'afrenkel_mailer';
-		private $database_password = 'mailermasivo589';
+		private $nombre_basededatos = '';
+		private $user_name = '';
+		private $database_password = '';
 
 		function __construct()
 		{
