@@ -5,10 +5,10 @@
 	class Mailer
 	{		
 		public $template = ''; //Plantilla que se va a usar para enviar el email, formato html por defecto
-		public $from = '"Ana Frenkel"<info@anafrenkel.com.ar>';
+		public $from = '' //Ingrese aqui su email "Soy yo" <soyyo@ejemplo.com> ;
 		public $headers = array();
 		/* Direccion web donde se encuentran alojados los archivos */
-		public $siteName = 'http://www.anafrenkel.com.ar/boletin'; // No se olvide de agregar http:// o https://
+		public $siteName = ''; // No se olvide de agregar http:// o https://
 
 		function __construct( $template_file )
 		{
