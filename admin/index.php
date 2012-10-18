@@ -3,50 +3,82 @@
 	include( '../classes/Mailer.class.php' ); 
 	$data_base = new BD(); 
 	$arrayCampaigns = $data_base->listar_campaigns();
+/**
+* Cambiar esto por el codigo preferido para seguridad del sistema
+*/	$code = 'alt64'; 
 ?>
 
 <?php
-	if( $_POST )
+	if( $_POST || $_POST['codigo']== $code )
 	{
-		$correos = $data_base->listar_correos();
-		$mailing = new Mailer( "boletin" );
-		$entregados = 0;
-		$rebotados = 0;
-
-	// Hacemos una condicion en la que solo permitiremos que se suban imagenes y que sean menores a 20 KB
-	    if ((($_FILES["archivo"]["type"] == "image/gif") ||  
-	    	($_FILES["archivo"]["type"] == "image/jpeg") ||  
-	    	($_FILES["archivo"]["type"] == "image/pjpeg")) &&  
-	    	($_FILES["archivo"]["size"] < 50000)) 
-	    {
-		
-			$varrand = substr(md5(uniqid(rand())),0,10);			
-			$directorio = "/images/";  
-
-			$varname = $_FILES["imagen"]['name'];
-			$vartemp = $_FILES['imagen']['tmp_name'];
-			$vartype = $_FILES['imagen']['type'];			
-			
-			$imgName = $varrand.".".$i;				
-			$imagen = $directorio.$imgName;				
-
-			move_uploaded_file($_FILES["archivo"]["tmp_name"], "../images/" . $imgName );			 
-			
-		}
-
-		foreach ($correos as $valor ) 
+		if( $emaildeprueba = $_POST['test'] )
 		{
-			if( $mailing->enviar_email( $valor['email'], $valor['id_email'], $_POST['asunto'], $_POST['mensaje'], $imagen ) )
-			{
-				$entregados = $entregados + 1;
-			} else {
-				$rebotados = $rebotados + 1;
-			}
-		}
+			$mailing = new Mailer( "boletin" );
+			 if ((($_FILES["archivo"]["type"] == "image/gif") ||  
+		    	($_FILES["archivo"]["type"] == "image/jpeg") ||  
+		    	($_FILES["archivo"]["type"] == "image/pjpeg")) &&  
+		    	($_FILES["archivo"]["size"] < 50000)) 
+		    {
+			
+				$varrand = substr(md5(uniqid(rand())),0,10);			
+				$directorio = "/images/";  
 
-		$data_base->guardar_campaigns( $entregados, $rebotados, $imagen );
-		$data_base->database_close();
-	}
+				$varname = $_FILES["imagen"]['name'];
+				$vartemp = $_FILES['imagen']['tmp_name'];
+				$vartype = $_FILES['imagen']['type'];			
+				
+				$imgName = $varrand.".".$i;				
+				$imagen = $directorio.$imgName;	
+									 
+				move_uploaded_file($_FILES["archivo"]["tmp_name"], "../images/" . $imgName );	
+			}
+
+			$mailing->enviar_prueba( $emaildeprueba, $_POST['asunto'], $_POST['mensaje'], $imagen );
+
+			$mensaje = "El email de prueba fue enviado a ". $_POST['test'];
+		} else {
+			$correos = $data_base->listar_correos();
+			$mailing = new Mailer( "boletin" );
+			$entregados = 0;
+			$rebotados = 0;
+
+		// Hacemos una condicion en la que solo permitiremos que se suban imagenes y que sean menores a 20 KB
+		    if ((($_FILES["archivo"]["type"] == "image/gif") ||  
+		    	($_FILES["archivo"]["type"] == "image/jpeg") ||  
+		    	($_FILES["archivo"]["type"] == "image/pjpeg")) &&  
+		    	($_FILES["archivo"]["size"] < 50000)) 
+		    {
+			
+				$varrand = substr(md5(uniqid(rand())),0,10);			
+				$directorio = "/images/";  
+
+				$varname = $_FILES["imagen"]['name'];
+				$vartemp = $_FILES['imagen']['tmp_name'];
+				$vartype = $_FILES['imagen']['type'];			
+				
+				$imgName = $varrand.".".$i;				
+				$imagen = $directorio.$imgName;				
+
+				move_uploaded_file($_FILES["archivo"]["tmp_name"], "../images/" . $imgName );			 
+				
+			}
+
+			foreach ($correos as $valor ) 
+			{
+				if( $mailing->enviar_email( $valor['email'], $valor['id_email'], $_POST['asunto'], $_POST['mensaje'], $imagen ) )
+				{
+					$entregados = $entregados + 1;
+				} else {
+					$rebotados = $rebotados + 1;
+				}
+			}
+
+			$data_base->guardar_campaigns( $entregados, $rebotados, $imagen );
+			$data_base->database_close();
+
+			$mensaje = "Campaña enviada con exito.";
+		}
+	} elseif( $_POST['codigo'] != $code ) { $aviso = "El codigo ingresado no es correcto."; }
 ?>
 
 <!DOCTYPE html>
@@ -65,6 +97,7 @@
 <body>	 
     <div id="header">
 	<div id="logo"><a href="#"><img src="images/logo.png"></a></div>
+		<?php echo $mensaje; ?>
 		<ul id="main-menu">
 	    	<li><a href="#campaigns">Campañas</a></li>
 	        <li><a href="#new-campaign">Nueva campaña</a></li>
@@ -83,7 +116,6 @@
 	    	   
 	        <div class="top-divider"></div>
 	        <div class="content">	        	
-	            <h2>Ordenadas por fecha de envio.</h2>	
 	            	<ul class="table-top">
 	            		<li class="indice">Identificador</li>
 	            		<li class="fecha">Fecha</li>
@@ -119,6 +151,10 @@
 	            	<input type="file" name="archivo" id="archivo"> 
 	            	<label for="mensaje">Cuerpo del correo <img src="images/icon-message.png"></label>		            	
 	            	<textarea name="mensaje" id="mensaje" cols="50" rows="10"></textarea>
+	            	<label for="test">Enviar primero una copia a este correo</label>
+	            	<input type="email" id="test" name="test" required="false">
+	            	<label for="codigo">Ingrese el código de seguridad</label>
+	            	<input id="codigo" name="codigo" type="text" size="5" maxlength="5">
 	            	<input type="submit" value="enviar">
 	            </form>
 	        </div>
