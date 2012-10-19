@@ -122,7 +122,22 @@
 			$sql = "INSERT INTO `campaigns` ( fecha, enviados, rebotados, imagen ) VALUES ( '". strtotime(date('Y-m-d')) ."', '". $entregados ."', '". $rebotados ."', '". $imagen ."')";
 			mysql_query( $sql, $this->conexion );
 		}
-
+		public function guardar_correos( $correos )
+		{
+			$errores = 0;
+			$guardado = 0;
+			foreach ($correos as $value) {
+				$email = trim( $value );
+			//Debo de estar seguro de que es una direccion de email bien escrita
+				if( preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/', $email) ) 
+				{
+					$sql = "INSERT INTO `mails` (email, status, created) VALUES ('". $email ."', 'active', '". strtotime(date('Y-m-d')) ."' )";
+					if( mysql_query( $sql, $this->conexion ) ) { $guardado = $guardado+1; } else { $errores = $errores+1; }
+				} else { $errores = $errores +1; }				
+			}	
+			return array( $errores, $guardado );	
+		}
+		
 	// Cierro la conexion con la base de datos
 		public function database_close()
 		{

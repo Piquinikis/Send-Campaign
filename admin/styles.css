@@ -83,6 +83,22 @@ ul.table-top li{
 	width: 20%;
 }
 
+ul.list-email{
+	float: left;
+	width: 100%;
+	list-style: none;
+}
+
+ul.list-email .inactive { color: red; }
+
+ul.list-email li {
+	float: left;
+	width: 25%;
+	padding-left: 3%;
+}
+
+.resaltar { font-size: 2em; font-weight: bold; }
+
 #campaigns .content{overflow:auto;}
 #campaigns .content img{float:left; margin-right:40px; border:5px solid #222222;}
 #campaigns .content #service-icons{margin-top:20px;}
@@ -100,12 +116,16 @@ ul.table-top li{
 #campaigns .content #service-icons li.services-film{background:url(images/icon-3.png) no-repeat;}
 #campaigns .content #service-icons li.services-photo{background:url(images/icon-4.png) no-repeat;}
 
-#new-campaign{margin:0px 43px; padding-top:115px;}
-#new-campaign .content{overflow:auto;}
+#agregar-correos, #new-campaign{margin:0px 43px; padding-top:115px;}
+#agregar-correos .content, #new-campaign .content{overflow:auto;}
+
+#agregar-correos #form,
 #new-campaign #form{
 	width:410px;
 	float:left;
 }
+
+#new-campaign #form span
 #new-campaign #form span{
 	display:block;
 	float:left;
@@ -113,6 +133,8 @@ ul.table-top li{
 	padding-top:5px;
 	font: 400 14px/16px 'Bree Serif', Georgia, serif;
 }
+
+#agregar-correos #form input,
 #new-campaign #form input{
 	float:left;
 	width:255px;
@@ -122,6 +144,8 @@ ul.table-top li{
 	font: 400 11px/20px 'Open Sans', Verdana, Helvetica, sans-serif;
 	margin-bottom:10px;
 }
+
+#agregar-correos #form textarea
 #new-campaign #form textarea{
 	float:left;
 	border:0px;
@@ -131,7 +155,7 @@ ul.table-top li{
 	font: 400 11px/20px 'Open Sans', Verdana, Helvetica, sans-serif;
 	color:#3b3b3b;
 }
-
+#agregar-correos #form label,
 #new-campaign #form label{
 	float: right;
 	width: 100%;
